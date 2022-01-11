@@ -1,11 +1,11 @@
 {
-  "name": "aci-helloworld",
+  "name": "azure-container-apps-helloworld",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "express": "^4.14.0",
-    "morgan": "^1.8.2"
+    "express": "^4.17.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {},
   "author": ""
