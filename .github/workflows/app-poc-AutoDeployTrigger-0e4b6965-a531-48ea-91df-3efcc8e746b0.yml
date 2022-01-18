@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: acrazconapps.azurecr.io/azconapps:${{ github.sha }}
+          tags: acrazconapps.azurecr.io/app-poc:${{ github.sha }}
           file: ./Dockerfile
 
 
@@ -56,4 +56,4 @@ jobs:
             echo "Installing containerapp extension"
             az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
             echo "Starting Deploying"
-            az containerapp update -n azconapps -g rg-azconapps-northeurope -i acrazconapps.azurecr.io/azconapps:${{ github.sha }} --registry-login-server acrazconapps.azurecr.io --registry-username  ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --debug
+            az containerapp update -n app-poc -g rg-az-translator -i acrazconapps.azurecr.io/app-poc:${{ github.sha }} --registry-login-server acrazconapps.azurecr.io --registry-username  ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --debug
