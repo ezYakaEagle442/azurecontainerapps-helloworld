@@ -8,7 +8,7 @@ on:
       [ main ]
     paths:
     - '**'
-    - '.github/workflows/azconapps-AutoDeployTrigger-44df7373-cbd3-4379-a447-c4b7e95bd45e.yml'
+    - '.github/workflows/azconapps-AutoDeployTrigger-99fc5c06-154e-4cb0-9fa3-4e79ed2cecd5.yml'
 
   # Allow mannually trigger 
   workflow_dispatch:      
