@@ -1,4 +1,4 @@
-name: Trigger auto deployment for containerapps
+name: Trigger auto deployment for containerapp azconapps
 
 # When this action will be executed
 on:
@@ -6,6 +6,9 @@ on:
   push:
     branches: 
       [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/azconapps-AutoDeployTrigger-44df7373-cbd3-4379-a447-c4b7e95bd45e.yml'
 
   # Allow mannually trigger 
   workflow_dispatch:      
@@ -17,8 +20,6 @@ jobs:
     steps:
       - name: Checkout to the branch
         uses: actions/checkout@v2
-        with:
-          path: main
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -27,8 +28,8 @@ jobs:
         uses: docker/login-action@v1
         with:
           registry: acrazconapps.azurecr.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+          username: ${{ secrets.AZCONAPPS_REGISTRY_USERNAME }}
+          password: ${{ secrets.AZCONAPPS_REGISTRY_PASSWORD }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
@@ -36,6 +37,7 @@ jobs:
           push: true
           tags: acrazconapps.azurecr.io/azconapps:${{ github.sha }}
           file: ./Dockerfile
+          context: ./
 
 
   deploy:
@@ -46,7 +48,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZCONAPPS_AZURE_CREDENTIALS }}
 
 
       - name: Deploy to containerapp
@@ -54,6 +56,7 @@ jobs:
         with:
           inlineScript: |
             echo "Installing containerapp extension"
-            az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+            az config set extension.use_dynamic_install=yes_without_prompt
             echo "Starting Deploying"
-            az containerapp update -n azconapps -g rg-azconapps-northeurope -i acrazconapps.azurecr.io/azconapps:${{ github.sha }} --registry-login-server acrazconapps.azurecr.io --registry-username  ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --debug
+            az containerapp registry set -n azconapps -g rg-azconapps-northeurope --server acrazconapps.azurecr.io --username  ${{ secrets.AZCONAPPS_REGISTRY_USERNAME }} --password ${{ secrets.AZCONAPPS_REGISTRY_PASSWORD }}
+            az containerapp update -n azconapps -g rg-azconapps-northeurope --image acrazconapps.azurecr.io/azconapps:${{ github.sha }}
